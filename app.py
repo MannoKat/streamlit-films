@@ -4,7 +4,7 @@ import plotly.express as px
 import datetime
 
 # Load the dataset
-file_path = "/datasets/IMDB Top 250 Movies.csv"
+file_path = "datasets/IMDB Top 250 Movies.csv"
 df = pd.read_csv(file_path)
 
 # Select the relevant columns
