@@ -1,0 +1,4 @@
+plotly
+pandas
+datetime
+streamlit_space
