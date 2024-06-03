@@ -4,7 +4,7 @@ import plotly.express as px
 import datetime
 
 # Load the dataset
-file_path = "datasets/IMDB Top 250 Movies.csv"
+file_path = "D:\\steamlit\\dataset\\IMDB Top 250 Movies.csv"
 df = pd.read_csv(file_path)
 
 # Select the relevant columns
@@ -108,32 +108,31 @@ with tab1:
         st.plotly_chart(fig, theme="streamlit", use_container_width=True)
 
 with tab2:
-    year = st.slider("Select a year:", min_value=1920, max_value=2021, value=2020, step=1, key="year")
-    df_year1 = df_genres_expanded[df_genres_expanded['year'] == year]
-    df_year = df_selected[df_selected['year'] == year]
+    st.header("Select a range for years:")
+    year_range = st.slider("Select a year range:", min_value=1920, max_value=2021, value=(1920, 2021), step=1)
+    
+    start_year, end_year = year_range
+    df_year1 = df_genres_expanded[(df_genres_expanded['year'] >= start_year) & (df_genres_expanded['year'] <= end_year)]
+    df_year = df_selected[(df_selected['year'] >= start_year) & (df_selected['year'] <= end_year)]
 
-                
-    st.markdown(f"**Top movies in {year}:**")
+    st.markdown(f"**Top movies from {start_year} to {end_year}:**")
     st.dataframe(df_year[['rank', 'name', 'rating', 'genre']].head(), width=1000)
-    popular_genres_year = df_year1['genre'].value_counts().nlargest(10)  # Get top 10 genres for the selected year
-    st.write(f"**Number of Films by Genre in {year}:**")
+    
+    popular_genres_year = df_year1['genre'].value_counts().nlargest(10)  # Get top 10 genres for the selected year range
+    st.write(f"**Number of Films by Genre from {start_year} to {end_year}:**")
     col1, col2 = st.columns([7, 8])
 
     with col1:
         if not df_year1.empty:
-            
             fig_year_bar = px.bar(popular_genres_year, x=popular_genres_year.index, y=popular_genres_year.values,
-                                labels={'x': 'Genre', 'y': 'Number of Films'})
+                                  labels={'x': 'Genre', 'y': 'Number of Films'})
             st.plotly_chart(fig_year_bar, theme="streamlit", use_container_width=True)
         else:
-            st.write(f"No films available for the selected year {year}.")
+            st.write(f"No films available for the selected range from {start_year} to {end_year}.")
             
     with col2:
         if not df_year1.empty:
-            
             fig_year_pie = px.pie(popular_genres_year, values=popular_genres_year.values, names=popular_genres_year.index)
             st.plotly_chart(fig_year_pie, theme="streamlit", use_container_width=True)
-
         else:
-            st.write(f"No films available for the selected year {year}.")
-            
+            st.write(f"No films available for the selected range from {start_year} to {end_year}.")
